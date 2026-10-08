@@ -2,7 +2,7 @@
   "name": "@mnemosyne-plugins/loom",
   "displayName": "Loom",
   "version": "0.1.0",
-  "category": "Developer",
+  "category": "System",
   "vendor": "Mnemosyne Labs",
   "license": "MIT",
   "description": "The history of a code project on one timeline. One line per area of the code, a point per commit, and the agent conversations that made them, linked: recorded when the conversation printed the commit, marked as probable when it only wrote the same files at the same time. You choose the repository and the conversations folder; nothing is read before that.",

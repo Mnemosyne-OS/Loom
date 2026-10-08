@@ -31,6 +31,7 @@
   ],
   "_permissions": "git:read reads the history of the repository you pick in the host's folder dialog: dates, author names, commit messages and file NAMES, never file contents. dialog:open reads the agent conversations folder you pick, and opens a conversation document on your press; Loom uses it to read only (the permission itself would also allow writing files, Loom never does). agent:export writes ONE conversation as a readable document beside its transcript, on your press, so it can be opened. model:infer writes the summary of one app, on your press, after showing what will be sent: its commit messages and what YOU typed in the tied conversations (never the agents' replies), to your active model, with no memory mixed in. Nothing is written anywhere else. The only thing that leaves the machine is a summary you ask for, sent to the model you chose in Mnemosyne (local or cloud).",
   "updateStrategy": "git",
+  "repository": "https://github.com/Mnemosyne-OS/Loom",
   "entrypoints": {
     "renderer": "index.html"
   },

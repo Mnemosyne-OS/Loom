@@ -1,0 +1,47 @@
+{
+  "name": "@mnemosyne-plugins/loom",
+  "displayName": "Loom",
+  "version": "0.1.0",
+  "category": "Developer",
+  "vendor": "Mnemosyne Labs",
+  "license": "MIT",
+  "description": "The history of a code project on one timeline. One line per area of the code, a point per commit, and the agent conversations that made them, linked: recorded when the conversation printed the commit, marked as probable when it only wrote the same files at the same time. You choose the repository and the conversations folder; nothing is read before that.",
+  "descriptionI18n": {
+    "en": "The history of a code project on one timeline. One line per area of the code, a point per commit, and the agent conversations that made them, linked: recorded when the conversation printed the commit, marked as probable when it only wrote the same files at the same time. You choose the repository and the conversations folder; nothing is read before that.",
+    "fr": "L'histoire d'un projet de code sur une frise. Une ligne par partie du code, un point par commit, et les conversations d'agents qui les ont faits, reliées : lien enregistré quand la conversation a affiché le commit, lien probable quand elle a seulement écrit les mêmes fichiers au même moment. Tu choisis le dépôt et le dossier des conversations ; rien n'est lu avant.",
+    "es": "La historia de un proyecto de código en una línea de tiempo. Una línea por parte del código, un punto por commit, y las conversaciones de agentes que los hicieron, enlazadas: enlace registrado cuando la conversación mostró el commit, enlace probable cuando solo escribió los mismos archivos en el mismo momento. Tú eliges el repositorio y la carpeta de conversaciones; nada se lee antes.",
+    "de": "Die Geschichte eines Code-Projekts auf einer Zeitleiste. Eine Zeile pro Teil des Codes, ein Punkt pro Commit und die Agenten-Gespräche, die sie gemacht haben, verknüpft: aufgezeichnet, wenn das Gespräch den Commit ausgegeben hat, als wahrscheinlich markiert, wenn es nur zur selben Zeit dieselben Dateien geschrieben hat. Du wählst das Repository und den Gesprächsordner; vorher wird nichts gelesen.",
+    "pt": "A história de um projeto de código numa linha do tempo. Uma linha por parte do código, um ponto por commit, e as conversas com agentes que os fizeram, ligadas: ligação registada quando a conversa mostrou o commit, ligação provável quando apenas escreveu os mesmos ficheiros ao mesmo tempo. Escolhes o repositório e a pasta das conversas; nada é lido antes.",
+    "ru": "История проекта с кодом на одной временной шкале. Строка на каждую часть кода, точка на каждый коммит и связанные с ними разговоры с агентами: связь записана, если разговор вывел коммит, и отмечена как вероятная, если он лишь записал те же файлы в то же время. Вы сами выбираете репозиторий и папку разговоров; до этого ничего не читается.",
+    "zh": "把一个代码项目的历史放在一条时间线上。代码的每个部分一行，每个提交一个点，并关联完成它们的智能体对话：对话输出了该提交时为“有记录”，只是在同一时间写过相同文件时标为“可能”。仓库和对话文件夹由你选择；在此之前不会读取任何内容。"
+  },
+  "keywords": [
+    "git",
+    "timeline",
+    "history",
+    "agents",
+    "claude-code",
+    "developer"
+  ],
+  "permissions": [
+    "git:read",
+    "dialog:open",
+    "agent:export",
+    "model:infer"
+  ],
+  "_permissions": "git:read reads the history of the repository you pick in the host's folder dialog: dates, author names, commit messages and file NAMES, never file contents. dialog:open reads the agent conversations folder you pick, and opens a conversation document on your press; Loom uses it to read only (the permission itself would also allow writing files, Loom never does). agent:export writes ONE conversation as a readable document beside its transcript, on your press, so it can be opened. model:infer writes the summary of one app, on your press, after showing what will be sent: its commit messages and what YOU typed in the tied conversations (never the agents' replies), to your active model, with no memory mixed in. Nothing is written anywhere else. The only thing that leaves the machine is a summary you ask for, sent to the model you chose in Mnemosyne (local or cloud).",
+  "updateStrategy": "git",
+  "entrypoints": {
+    "renderer": "index.html"
+  },
+  "widgets": [
+    {
+      "id": "loom-main",
+      "icon": "🧶",
+      "name": "Loom",
+      "route": "index.html",
+      "defaultWidth": 1240,
+      "defaultHeight": 800
+    }
+  ]
+}

@@ -1,0 +1,290 @@
+/*
+ * Loom — liquid glass.
+ *
+ * Every colour is a token (rule 12), derived from the host's design tokens so
+ * the glass follows the shell's theme. The canvas reads the --loom-* tokens at
+ * paint time. Glass needs something behind it to blur: the aurora layer is
+ * that something, two soft blooms of the accent colour, fixed and still.
+ */
+:root {
+  --loom-bg: var(--bg-void, #0f0d12);
+  --loom-text: var(--text-primary, #ece7e1);
+  --loom-muted: var(--text-muted, #948c84);
+  --loom-accent: var(--accent, #8caaff);
+
+  /* Glass */
+  --glass-fill: color-mix(in srgb, var(--bg-panel, #1a171c) 52%, transparent);
+  --glass-fill-strong: color-mix(in srgb, var(--bg-panel, #1a171c) 72%, transparent);
+  --glass-edge: color-mix(in srgb, var(--loom-text) 14%, transparent);
+  --glass-highlight: color-mix(in srgb, var(--loom-text) 16%, transparent);
+  --glass-shadow: color-mix(in srgb, #000 38%, transparent);
+  --glass-blur: 22px;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+
+  /* Aurora behind the glass */
+  --aurora-a: color-mix(in srgb, var(--loom-accent) 32%, transparent);
+  --aurora-b: color-mix(in srgb, #c77dff 22%, transparent);
+
+  /* Canvas. The type colours and milestone colours are Loom's own palette:
+     the host has no token for "feature" or "docs", so they are named here,
+     once, and everything else reads them through var(). */
+  --loom-grid: color-mix(in srgb, var(--loom-text) 6%, transparent);
+  --loom-noconv: color-mix(in srgb, var(--loom-text) 4%, transparent);
+  --loom-session: color-mix(in srgb, var(--loom-accent) 26%, transparent);
+  --loom-feat: #5fd39a;
+  --loom-fix: var(--danger, #ef7272);
+  --loom-docs: #74b4f2;
+  --loom-other: #a49c94;
+  --loom-select: #f6cd5c;
+  --loom-label-bg: color-mix(in srgb, var(--bg-panel, #1a171c) 88%, transparent);
+}
+
+.loom {
+  position: relative;
+  height: 100%;
+  overflow: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--loom-bg);
+  color: var(--loom-text);
+  font-size: 13px;
+  isolation: isolate;
+}
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(48% 42% at 12% 8%, var(--aurora-a), transparent 70%),
+    radial-gradient(42% 46% at 92% 30%, var(--aurora-b), transparent 70%),
+    radial-gradient(60% 40% at 50% 110%, color-mix(in srgb, var(--loom-accent) 14%, transparent), transparent 70%);
+}
+
+/* ── The glass material ─────────────────────────────────────────────────── */
+.glass {
+  background: linear-gradient(160deg, var(--glass-highlight) 0%, transparent 38%), var(--glass-fill);
+  backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 color-mix(in srgb, #000 20%, transparent),
+    0 10px 34px var(--glass-shadow);
+}
+
+h1 { margin: 0; font-size: 17px; letter-spacing: 0.2px; }
+h2 { margin: 0; font-size: 13px; font-weight: 600; }
+h3 { margin: 10px 0 2px; font-size: 12px; }
+.help { color: var(--loom-muted); margin: 2px 0; font-size: 12px; }
+.error-line { color: var(--loom-fix); margin: 4px 0; font-size: 12px; }
+code { font-family: var(--font-mono, ui-monospace, monospace); font-size: 11.5px; }
+
+/* ── Controls ───────────────────────────────────────────────────────────── */
+button, select {
+  font: inherit;
+  color: var(--loom-text);
+}
+.pill {
+  border: 1px solid var(--glass-edge);
+  background: linear-gradient(180deg, var(--glass-highlight), transparent), var(--glass-fill-strong);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+.pill:hover:not(:disabled) { background: linear-gradient(180deg, var(--glass-highlight), transparent), color-mix(in srgb, var(--loom-accent) 18%, var(--glass-fill-strong)); }
+.pill:active:not(:disabled) { transform: scale(0.98); }
+.pill:disabled { opacity: 0.45; cursor: default; }
+.pill.primary {
+  background: linear-gradient(180deg, color-mix(in srgb, #fff 26%, transparent), transparent), var(--loom-accent);
+  color: var(--loom-bg);
+  font-weight: 600;
+  border-color: transparent;
+}
+.pill.ghost { background: transparent; box-shadow: none; border-color: transparent; color: var(--loom-muted); }
+.pill.small { padding: 2px 10px; font-size: 12px; }
+.pill.add { align-self: flex-start; border-style: dashed; }
+select {
+  background: var(--glass-fill-strong);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-md);
+  padding: 5px 10px;
+}
+
+/* ── Top bar ────────────────────────────────────────────────────────────── */
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+}
+.brand { display: flex; flex-direction: column; min-width: 0; }
+.brand .sub { color: var(--loom-muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.chip {
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--glass-fill-strong);
+  border: 1px solid var(--glass-edge);
+  font-size: 12px;
+  color: var(--loom-muted);
+}
+.chip.k-recorded { color: var(--loom-text); border-color: color-mix(in srgb, var(--loom-accent) 50%, transparent); }
+.chip.k-inferred { border-style: dashed; }
+.actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+.progress { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--loom-muted); }
+.track { height: 6px; border-radius: var(--radius-pill); background: var(--glass-fill-strong); overflow: hidden; border: 1px solid var(--glass-edge); }
+.fill { height: 100%; background: linear-gradient(90deg, var(--loom-accent), color-mix(in srgb, var(--loom-accent) 60%, #fff)); border-radius: inherit; transition: width 0.3s; }
+/* No total measured: a sweep, never a bar parked at a made-up percentage. */
+.fill.sweep { width: 30%; animation: sweep 1.2s ease-in-out infinite; }
+@keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+@media (prefers-reduced-motion: reduce) { .fill.sweep { animation: none; width: 100%; opacity: 0.4; } }
+
+.notice { padding: 8px 14px; }
+
+/* ── Sources ────────────────────────────────────────────────────────────── */
+.sources { display: grid; grid-template-columns: minmax(240px, 1fr) minmax(320px, 2fr); gap: 12px; }
+@media (max-width: 760px) { .sources { grid-template-columns: 1fr; } }
+.panel { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.panel .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.repo-name { margin: 4px 0; font-size: 15px; }
+.roots { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow: auto; }
+.root {
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--glass-fill) 60%, transparent);
+}
+.root-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.root-head code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.groups { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.groups label { display: flex; gap: 8px; align-items: center; padding: 3px 6px; border-radius: 8px; cursor: pointer; }
+.groups label:hover { background: var(--glass-fill-strong); }
+.groups li.fits code { color: var(--loom-text); font-weight: 600; }
+.groups code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.groups input { accent-color: var(--loom-accent); }
+
+/* ── Board ──────────────────────────────────────────────────────────────── */
+.board { display: flex; flex-direction: column; gap: 8px; min-height: 420px; flex: 1; padding: 10px 12px; }
+.board-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.segmented { display: inline-flex; border: 1px solid var(--glass-edge); border-radius: var(--radius-pill); overflow: hidden; background: var(--glass-fill-strong); }
+.segmented button { background: transparent; border: 0; padding: 5px 12px; cursor: pointer; }
+.segmented button + button { border-left: 1px solid var(--glass-edge); }
+.segmented button:hover, .segmented button[aria-pressed='true'] { background: color-mix(in srgb, var(--loom-accent) 20%, transparent); }
+.legend { display: inline-flex; gap: 6px; align-items: center; color: var(--loom-muted); }
+.legend .dot { margin-left: 6px; }
+.hint { margin-left: auto; }
+.read-stats { margin: 0; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+.dot.feat { background: var(--loom-feat); }
+.dot.fix { background: var(--loom-fix); }
+.dot.docs { background: var(--loom-docs); }
+.dot.other { background: var(--loom-other); }
+
+.board-body { display: flex; gap: 10px; min-height: 0; flex: 1; }
+.timeline {
+  position: relative; flex: 1; min-width: 0; overflow: hidden;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--loom-bg) 55%, transparent);
+  border: 1px solid var(--glass-edge);
+}
+.timeline canvas { display: block; touch-action: none; }
+.tip {
+  position: absolute; top: 6px; right: 8px; max-width: 60%;
+  padding: 5px 10px; font-size: 12px; pointer-events: none;
+  background: var(--glass-fill-strong);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-md);
+}
+
+/* ── Commit card ────────────────────────────────────────────────────────── */
+.card {
+  width: 340px; flex: none; overflow: auto; padding: 12px 14px;
+  background: linear-gradient(160deg, var(--glass-highlight) 0%, transparent 38%), var(--glass-fill-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+.card header { display: flex; justify-content: space-between; align-items: center; }
+.card .sha { padding: 2px 8px; border-radius: var(--radius-pill); background: var(--glass-fill); border: 1px solid var(--glass-edge); }
+.card button { border: 1px solid var(--glass-edge); background: var(--glass-fill); border-radius: var(--radius-pill); padding: 3px 12px; cursor: pointer; }
+.card button.ghost { border-color: transparent; background: transparent; color: var(--loom-muted); }
+.card h2 { font-size: 14px; margin: 8px 0 2px; }
+.card .meta { color: var(--loom-muted); font-size: 12px; }
+.card ul { list-style: none; margin: 0; padding: 0; }
+.card .inferred h3 { font-style: italic; }
+.card .inferred .session-row { border-left-style: dashed; border-left-color: var(--glass-edge); }
+.session-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  padding: 6px 8px; margin: 4px 0;
+  border-left: 2px solid var(--loom-accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: color-mix(in srgb, var(--glass-fill) 70%, transparent);
+}
+.session-text { display: flex; flex-direction: column; min-width: 0; }
+.session-title { overflow: hidden; text-overflow: ellipsis; }
+.session-when { color: var(--loom-muted); font-size: 11px; }
+.files { margin-top: 10px !important; max-height: 200px; overflow: auto; }
+
+.empty-card { margin: auto; padding: 18px 22px; }
+
+/* ── App card (doc 140 §16) ─────────────────────────────────────────────── */
+:root { --loom-focus: color-mix(in srgb, var(--loom-accent) 16%, transparent); }
+.lane-card .lane-name { margin: 0; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
+.figures div {
+  display: flex; flex-direction: column; gap: 2px; padding: 8px 10px;
+  border: 1px solid var(--glass-edge); border-radius: var(--radius-md); background: var(--glass-fill);
+}
+.figures strong { font-size: 18px; }
+.figures span { color: var(--loom-muted); font-size: 11px; }
+.family-bar { display: flex; height: 8px; border-radius: var(--radius-pill); overflow: hidden; gap: 2px; margin: 6px 0 4px; }
+.family-bar .seg { display: block; min-width: 3px; }
+.family-bar .seg.feat { background: var(--loom-feat); }
+.family-bar .seg.fix { background: var(--loom-fix); }
+.family-bar .seg.docs { background: var(--loom-docs); }
+.family-bar .seg.other { background: var(--loom-other); }
+.weeks { width: 100%; height: 48px; display: block; }
+.weeks rect { fill: var(--loom-accent); opacity: 0.8; }
+.session-row.probable { border-left-style: dashed; border-left-color: var(--glass-edge); }
+.lane-card .files code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; max-width: 85%; vertical-align: bottom; }
+
+.split-toggle {
+  align-self: flex-start; margin: 6px 0 2px;
+  border: 1px dashed var(--glass-edge) !important; background: transparent !important;
+}
+.split-toggle:hover { background: var(--glass-fill) !important; }
+
+/* ── Summary of an app (doc 140 §18) ───────────────────────────────────── */
+.digest { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.digest .pill { align-self: flex-start; }
+.digest-text { margin: 0; line-height: 1.5; white-space: pre-wrap; }
+.digest-confirm {
+  border: 1px solid var(--glass-edge); border-radius: var(--radius-md);
+  padding: 8px 10px; background: var(--glass-fill);
+}
+.digest-confirm p { margin: 2px 0; }
+.digest-confirm .row { display: flex; gap: 8px; margin-top: 6px; }
+
+/* ── Milestones (doc 140 §19) ──────────────────────────────────────────── */
+:root { --loom-mark-doc: #f6cd5c; --loom-mark-memory: #c79bff; }
+.diamond { display: inline-block; width: 8px; height: 8px; transform: rotate(45deg); margin: 0 4px 0 8px; }
+.diamond.doc { background: var(--loom-mark-doc); }
+.diamond.memory { background: var(--loom-mark-memory); }

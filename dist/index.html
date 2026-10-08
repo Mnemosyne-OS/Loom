@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loom</title>
+    <style>
+      /* The host broadcasts its live design tokens over postMessage and the SDK
+         writes them onto <html>. These fallbacks are what the cartridge looks
+         like before that arrives, and when it is opened standalone in dev. */
+      html, body, #root { height: 100%; margin: 0; }
+      body {
+        background: var(--bg-void, #121014);
+        color: var(--text-primary, #efe9e3);
+        font-family: var(--font-sans, 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif);
+        overflow: hidden;
+      }
+      * { box-sizing: border-box; }
+      ::-webkit-scrollbar { width: 10px; height: 10px; }
+      ::-webkit-scrollbar-thumb { background: var(--border-subtle, #2c2629); border-radius: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+    </style>
+    <script type="module" crossorigin src="./assets/index-CWkiUNb7.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DV3TCxcL.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
